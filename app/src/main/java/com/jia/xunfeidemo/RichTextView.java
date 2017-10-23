@@ -94,11 +94,17 @@ public class RichTextView extends TextView {
         setText(Html.fromHtml(text, mNetWorkImageGetter, new Html.TagHandler() {
             @Override
             public void handleTag(boolean b, String s, Editable editable, XMLReader xmlReader) {
+                Log.e(TAG, "handleTag: "+s );
                 if (s.equals("img")) {
                     img_num++;
                 }
             }
         }));
+
+        // 没有图片直接加载
+        if(img_num==0){
+            setText();
+        }
     }
 
 
@@ -106,6 +112,8 @@ public class RichTextView extends TextView {
 
         @Override
         public Drawable getDrawable(final String source) {
+
+            Log.e(TAG, "getDrawable: " );
 
             if (imgs.containsKey(source)) {
                 imgs.get(source).setBounds(0, 0, imgs.get(source).getIntrinsicWidth() * 2,
@@ -120,37 +128,7 @@ public class RichTextView extends TextView {
                             handler.post(new Runnable() {
                                 @Override
                                 public void run() {
-
-                                    lines = getText().toString().split("。|？|！|@|···");
-
-                                    if (lines != null && lines.length > 0) {
-
-                                        span = new int[lines.length];
-                                        for (int i = 0; i < lines.length; i++) {
-                                            Log.e(TAG, "run: "+i+" "+lines[i] );
-                                            if (i == 0) {
-                                                span[i] = 0;
-                                            } else {
-                                                span[i] = span[i - 1] + lines[i - 1].length() + 1;
-                                            }
-
-                                        }
-
-                                    }
-
-                                    setText(Html.fromHtml(text, mNetWorkImageGetter, null));
-
-                                    SpannableStringBuilder style = new SpannableStringBuilder(getText());
-                                    for (int i = 0; i < span.length; i++) {
-                                        if(i==span.length-1){
-                                            style.setSpan(new TextViewURLSpan(i), span[i], getText().length()-1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                                        }else{
-                                            style.setSpan(new TextViewURLSpan(i), span[i], span[i+1]-1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                                        }
-
-                                    }
-                                    setText(style);
-                                    setMovementMethod(LinkMovementMethod.getInstance());
+                                    setText();
                                 }
                             });
                         }
@@ -161,6 +139,40 @@ public class RichTextView extends TextView {
             return imgs.get(source);
         }
 
+    }
+
+    private void setText(){
+        Log.e(TAG, "setText: " );
+        lines = getText().toString().split("。|？|！|@|···|;|；|!");
+
+        if (lines != null && lines.length > 0) {
+
+            span = new int[lines.length];
+            for (int i = 0; i < lines.length; i++) {
+                Log.e(TAG, "run: "+i+" "+lines[i] );
+                if (i == 0) {
+                    span[i] = 0;
+                } else {
+                    span[i] = span[i - 1] + lines[i - 1].length() + 1;
+                }
+
+            }
+
+        }
+
+        setText(Html.fromHtml(text, mNetWorkImageGetter, null));
+
+        SpannableStringBuilder style = new SpannableStringBuilder(getText());
+        for (int i = 0; i < span.length; i++) {
+            if(i==span.length-1){
+                style.setSpan(new TextViewURLSpan(i), span[i], getText().length()-1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }else{
+                style.setSpan(new TextViewURLSpan(i), span[i], span[i+1]-1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+
+        }
+        setText(style);
+        setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     private class TextViewURLSpan extends ClickableSpan {
