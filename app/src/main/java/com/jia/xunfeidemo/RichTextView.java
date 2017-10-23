@@ -17,6 +17,7 @@ import android.text.style.ClickableSpan;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.iflytek.cloud.InitListener;
@@ -38,7 +39,7 @@ import java.util.HashMap;
  * Created by jia on 2017/10/20.
  * 人之所以能，是相信能
  */
-public class RichTextView extends TextView {
+public class RichTextView extends EditText {
 
     private static final String TAG = "RichTextView";
 
@@ -89,6 +90,7 @@ public class RichTextView extends TextView {
     }
 
     public void fromHtml(String text){
+
         this.text=text;
 
         setText(Html.fromHtml(text, mNetWorkImageGetter, new Html.TagHandler() {
@@ -264,5 +266,10 @@ public class RichTextView extends TextView {
             bitmap = null;
         }
         return bitmap;
+    }
+
+    @Override
+    protected boolean getDefaultEditable() {//禁止EditText被编辑
+        return false;
     }
 }

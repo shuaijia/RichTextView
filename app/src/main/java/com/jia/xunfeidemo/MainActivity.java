@@ -64,7 +64,7 @@ public class MainActivity extends Activity {
 
         tv_rich_two = findViewById(R.id.tv_rich_two);
 
-        tv_rich_two.fromHtml(text2);
+        tv_rich_two.fromHtml(text);
 
     }
 
