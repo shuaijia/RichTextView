@@ -4,13 +4,9 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
-import android.webkit.WebView;
 
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechUtility;
-
-import java.util.Random;
 
 /**
  * Description:
