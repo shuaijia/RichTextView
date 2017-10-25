@@ -1,7 +1,11 @@
 package com.jia.xunfeidemo;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
+import android.webkit.WebView;
 
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechUtility;
@@ -60,6 +64,7 @@ public class MainActivity extends Activity {
             + "</p><p><font color=\"#00bbaa\">颜色2</p><h1>标题1</h1><h3>标题2</h3><h6>标题3</h6><p>大于>小于<</p><p>" +
             "下面是网络图片</p><img src=\"http://static.oschina.net/uploads/space/2015/0720/172817_huYO_2359467.jpg\"/></body></html>";
 
+    @TargetApi(Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

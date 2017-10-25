@@ -3,17 +3,23 @@ package com.jia.xunfeidemo;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.text.Editable;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
+import android.text.method.MovementMethod;
+import android.text.style.BackgroundColorSpan;
+import android.text.style.CharacterStyle;
 import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -39,15 +45,13 @@ import java.util.HashMap;
  * Created by jia on 2017/10/20.
  * 人之所以能，是相信能
  */
-public class RichTextView extends EditText {
+public class RichTextView extends TextView {
 
     private static final String TAG = "RichTextView";
 
     private HashMap<String, Drawable> imgs = new HashMap<>();
 
     private NetWorkImageGetter mNetWorkImageGetter = new NetWorkImageGetter();
-
-    private Handler handler = new Handler();
 
     private int img_num = 0;
 
@@ -57,6 +61,8 @@ public class RichTextView extends EditText {
 
     private String text;
 
+    private SpannableStringBuilder style;
+
     //语音合成对象
     private SpeechSynthesizer mSpeechSynthesizer;
 
@@ -64,6 +70,17 @@ public class RichTextView extends EditText {
     public static String voicerCloud = "xiaoyan";
     // 引擎类型
     private String mEngineType = SpeechConstant.TYPE_CLOUD;
+
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg.what == 205) {
+                startSpeaking((int) msg.obj + 1);
+            }
+        }
+    };
 
     public RichTextView(Context context) {
         super(context);
@@ -80,7 +97,8 @@ public class RichTextView extends EditText {
         init();
     }
 
-    private void init(){
+    private void init() {
+
         mSpeechSynthesizer = SpeechSynthesizer.createSynthesizer(getContext(), new InitListener() {
             @Override
             public void onInit(int i) {
@@ -89,14 +107,14 @@ public class RichTextView extends EditText {
         });
     }
 
-    public void fromHtml(String text){
+    public void fromHtml(String text) {
 
-        this.text=text;
+        this.text = text;
 
         setText(Html.fromHtml(text, mNetWorkImageGetter, new Html.TagHandler() {
             @Override
             public void handleTag(boolean b, String s, Editable editable, XMLReader xmlReader) {
-                Log.e(TAG, "handleTag: "+s );
+                Log.e(TAG, "handleTag: " + s);
                 if (s.equals("img")) {
                     img_num++;
                 }
@@ -104,7 +122,7 @@ public class RichTextView extends EditText {
         }));
 
         // 没有图片直接加载
-        if(img_num==0){
+        if (img_num == 0) {
             setText();
         }
     }
@@ -115,7 +133,7 @@ public class RichTextView extends EditText {
         @Override
         public Drawable getDrawable(final String source) {
 
-            Log.e(TAG, "getDrawable: " );
+            Log.e(TAG, "getDrawable: ");
 
             if (imgs.containsKey(source)) {
                 imgs.get(source).setBounds(0, 0, imgs.get(source).getIntrinsicWidth() * 2,
@@ -143,15 +161,15 @@ public class RichTextView extends EditText {
 
     }
 
-    private void setText(){
-        Log.e(TAG, "setText: " );
+    private void setText() {
+        Log.e(TAG, "setText: ");
         lines = getText().toString().split("。|？|！|@|···|;|；|!");
 
         if (lines != null && lines.length > 0) {
 
             span = new int[lines.length];
             for (int i = 0; i < lines.length; i++) {
-                Log.e(TAG, "run: "+i+" "+lines[i] );
+                Log.e(TAG, "run: " + i + " " + lines[i]);
                 if (i == 0) {
                     span[i] = 0;
                 } else {
@@ -164,12 +182,12 @@ public class RichTextView extends EditText {
 
         setText(Html.fromHtml(text, mNetWorkImageGetter, null));
 
-        SpannableStringBuilder style = new SpannableStringBuilder(getText());
+        style = new SpannableStringBuilder(getText());
         for (int i = 0; i < span.length; i++) {
-            if(i==span.length-1){
-                style.setSpan(new TextViewURLSpan(i), span[i], getText().length()-1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }else{
-                style.setSpan(new TextViewURLSpan(i), span[i], span[i+1]-1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            if (i == span.length - 1) {
+                style.setSpan(new TextViewURLSpan(i), span[i], getText().length() - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            } else {
+                style.setSpan(new TextViewURLSpan(i), span[i], span[i + 1] - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
 
         }
@@ -186,56 +204,104 @@ public class RichTextView extends EditText {
 
         @Override
         public void updateDrawState(TextPaint ds) {
-
-            ds.setUnderlineText(false); //去掉下划线
         }
 
         @Override
         public void onClick(View widget) {//点击事件
-            Log.e(TAG, "onClick: "+flag);
+            Log.e(TAG, "onClick: ");
 
-            // 语音合成
-            mSpeechSynthesizer.setParameter(SpeechConstant.ENGINE_TYPE, mEngineType);
-            mSpeechSynthesizer.setParameter(SpeechConstant.ENGINE_MODE, mEngineType);
+//            for (int i = 0; i < span.length; i++) {
+//                if (i == flag) {
+//                    if (i == span.length - 1) {
+//                        style.setSpan(new ForegroundColorSpan(Color.RED), span[i], getText().length() - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                    } else {
+//                        style.setSpan(new ForegroundColorSpan(Color.RED), span[i], span[i + 1] - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                    }
+//                } else {
+//                    if (i == span.length - 1) {
+//                        style.setSpan(new ForegroundColorSpan(Color.GRAY), span[i], getText().length() - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                    } else {
+//                        style.setSpan(new ForegroundColorSpan(Color.GRAY), span[i], span[i + 1] - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                    }
+//                }
+//            }
+//
+//            setText(style);
 
-            mSpeechSynthesizer.setParameter(SpeechConstant.VOICE_NAME, voicerCloud);
+            handler.removeMessages(205);
 
-            mSpeechSynthesizer.startSpeaking(lines[flag], new SynthesizerListener() {
-                @Override
-                public void onSpeakBegin() {
-
-                }
-
-                @Override
-                public void onBufferProgress(int i, int i1, int i2, String s) {
-
-                }
-
-                @Override
-                public void onSpeakPaused() {
-
-                }
-
-                @Override
-                public void onSpeakResumed() {
-
-                }
-
-                @Override
-                public void onSpeakProgress(int i, int i1, int i2) {
-
-                }
-
-                @Override
-                public void onCompleted(SpeechError speechError) {
-                }
-
-                @Override
-                public void onEvent(int i, int i1, int i2, Bundle bundle) {
-
-                }
-            });
+            startSpeaking(flag);
         }
+    }
+
+    private void startSpeaking(final int flag) {
+        for (int i = 0; i < span.length; i++) {
+            if (i == flag) {
+                if (i == span.length - 1) {
+                    style.setSpan(new ForegroundColorSpan(Color.RED), span[i], getText().length() - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                } else {
+                    style.setSpan(new ForegroundColorSpan(Color.RED), span[i], span[i + 1] - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+            } else {
+                if (i == span.length - 1) {
+                    style.setSpan(new ForegroundColorSpan(Color.GRAY), span[i], getText().length() - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                } else {
+                    style.setSpan(new ForegroundColorSpan(Color.GRAY), span[i], span[i + 1] - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+            }
+        }
+
+        setText(style);
+
+        // 语音合成
+        mSpeechSynthesizer.setParameter(SpeechConstant.ENGINE_TYPE, mEngineType);
+        mSpeechSynthesizer.setParameter(SpeechConstant.ENGINE_MODE, mEngineType);
+
+        mSpeechSynthesizer.setParameter(SpeechConstant.VOICE_NAME, voicerCloud);
+
+        mSpeechSynthesizer.startSpeaking(lines[flag], new SynthesizerListener() {
+            @Override
+            public void onSpeakBegin() {
+
+            }
+
+            @Override
+            public void onBufferProgress(int i, int i1, int i2, String s) {
+
+            }
+
+            @Override
+            public void onSpeakPaused() {
+
+            }
+
+            @Override
+            public void onSpeakResumed() {
+
+            }
+
+            @Override
+            public void onSpeakProgress(int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onCompleted(SpeechError speechError) {
+                if (flag != lines.length - 1) {
+                    Message msg = new Message();
+                    msg.what = 205;
+                    msg.obj = flag;
+                    handler.sendMessage(msg);
+
+
+                }
+            }
+
+            @Override
+            public void onEvent(int i, int i1, int i2, Bundle bundle) {
+
+            }
+        });
     }
 
     /**
@@ -271,5 +337,11 @@ public class RichTextView extends EditText {
     @Override
     protected boolean getDefaultEditable() {//禁止EditText被编辑
         return false;
+    }
+
+
+    @Override
+    protected MovementMethod getDefaultMovementMethod() {
+        return super.getDefaultMovementMethod();
     }
 }
