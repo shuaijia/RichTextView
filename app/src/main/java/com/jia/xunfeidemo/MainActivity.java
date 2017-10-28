@@ -2,6 +2,7 @@ package com.jia.xunfeidemo;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -69,7 +70,6 @@ public class MainActivity extends Activity {
         SpeechUtility.createUtility(MainActivity.this, SpeechConstant.APPID + "=59e565f2");
 
         setContentView(R.layout.activity_rich_two);
-
 
         tv_rich_two = findViewById(R.id.tv_rich_two);
 
