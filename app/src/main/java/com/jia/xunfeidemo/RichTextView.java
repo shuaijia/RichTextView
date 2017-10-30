@@ -344,4 +344,10 @@ public class RichTextView extends TextView {
     protected MovementMethod getDefaultMovementMethod() {
         return super.getDefaultMovementMethod();
     }
+
+    @Override
+    public void setVisibility(int visibility) {
+        super.setVisibility(visibility);
+        mSpeechSynthesizer.stopSpeaking();
+    }
 }
