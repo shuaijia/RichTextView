@@ -16,14 +16,11 @@ import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.method.MovementMethod;
-import android.text.style.BackgroundColorSpan;
-import android.text.style.CharacterStyle;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.iflytek.cloud.InitListener;
@@ -111,7 +108,7 @@ public class RichTextView extends TextView {
 
         this.text = text;
 
-        setText(Html.fromHtml(text, mNetWorkImageGetter, new Html.TagHandler() {
+        setText(Html.fromHtml(this.text, mNetWorkImageGetter, new Html.TagHandler() {
             @Override
             public void handleTag(boolean b, String s, Editable editable, XMLReader xmlReader) {
                 Log.e(TAG, "handleTag: " + s);
@@ -124,6 +121,20 @@ public class RichTextView extends TextView {
         // 没有图片直接加载
         if (img_num == 0) {
             setText();
+        }
+
+
+    }
+
+    class TextIndex {
+        int line;
+        int start;
+        int end;
+
+        public TextIndex(int line, int start, int end) {
+            this.line = line;
+            this.start = start;
+            this.end = end;
         }
     }
 
@@ -209,24 +220,6 @@ public class RichTextView extends TextView {
         @Override
         public void onClick(View widget) {//点击事件
             Log.e(TAG, "onClick: ");
-
-//            for (int i = 0; i < span.length; i++) {
-//                if (i == flag) {
-//                    if (i == span.length - 1) {
-//                        style.setSpan(new ForegroundColorSpan(Color.RED), span[i], getText().length() - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                    } else {
-//                        style.setSpan(new ForegroundColorSpan(Color.RED), span[i], span[i + 1] - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                    }
-//                } else {
-//                    if (i == span.length - 1) {
-//                        style.setSpan(new ForegroundColorSpan(Color.GRAY), span[i], getText().length() - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                    } else {
-//                        style.setSpan(new ForegroundColorSpan(Color.GRAY), span[i], span[i + 1] - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                    }
-//                }
-//            }
-//
-//            setText(style);
 
             handler.removeMessages(205);
 

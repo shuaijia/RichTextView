@@ -2,7 +2,6 @@ package com.jia.xunfeidemo;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -19,6 +18,8 @@ public class MainActivity extends Activity {
     private static final String TAG = "MainActivity";
 
     private RichTextView tv_rich_two;
+
+    private NoteTextView tv_note;
 
     private static final String text = "<div class=\"BlogContent\"><p><span style=\"font-size: 14px;\"><strong>各位 OSCer 大家壕，周二了，你们的周一综合症好了吧，没借口偷懒了吧，赶紧上班去吧！很多少人羡慕着你们呢</strong></span></p><p><span style=\"font-size: 14px;\"></span></p><p><a href=\"http://my.oschina.net/u/1756518\" target=\"_blank\" rel=\"nofollow\">@西夏一品堂</a><span style=\"font-size: 14px;\">：每天看你们发说说，我都好羡慕 。你们长得又好看 ，还用智能手机，又有钱 &nbsp;\n" +
             "，整天讨论一些好像很厉害的东西。随便拿个东西都顶我几个月的生活费，我读书少，又是乡下来的，没见过多少世面，所以我只能默默的看着你发，时不时点个赞\n" +
@@ -71,11 +72,8 @@ public class MainActivity extends Activity {
 
         setContentView(R.layout.activity_rich_two);
 
-        tv_rich_two = findViewById(R.id.tv_rich_two);
-
-
+        tv_rich_two=findViewById(R.id.tv_rich_two);
         tv_rich_two.fromHtml(text);
 
     }
-
 }
