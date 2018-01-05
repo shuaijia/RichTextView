@@ -38,4 +38,11 @@ dependencies {
     compile 'com.android.support:appcompat-v7:26.+'
     compile files('libs/Msc.jar')
     compile files('libs/Sunflower.jar')
+
+    //导入retrofit，的版本号必须一样
+    compile 'io.reactivex:rxjava:1.1.0'
+    compile 'io.reactivex:rxandroid:1.1.0'
+    compile 'com.squareup.retrofit2:retrofit:2.0.0-beta4'
+    compile 'com.squareup.retrofit2:converter-gson:2.0.0-beta4'
+    compile 'com.squareup.retrofit2:adapter-rxjava:2.0.0-beta4'
 }

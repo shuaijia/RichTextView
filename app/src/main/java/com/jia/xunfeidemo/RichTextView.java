@@ -28,14 +28,20 @@ import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SpeechSynthesizer;
 import com.iflytek.cloud.SynthesizerListener;
+import com.jia.xunfeidemo.net.HttpMethod;
+import com.jia.xunfeidemo.net.TransModel;
 
 import org.xml.sax.XMLReader;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.HashMap;
+
+import rx.Subscriber;
 
 /**
  * Description: 富文本展示  讯飞语音阅读
@@ -144,8 +150,6 @@ public class RichTextView extends TextView {
         @Override
         public Drawable getDrawable(final String source) {
 
-            Log.e(TAG, "getDrawable: ");
-
             if (imgs.containsKey(source)) {
                 imgs.get(source).setBounds(0, 0, imgs.get(source).getIntrinsicWidth() * 2,
                         imgs.get(source).getIntrinsicHeight() * 2);
@@ -180,7 +184,6 @@ public class RichTextView extends TextView {
 
             span = new int[lines.length];
             for (int i = 0; i < lines.length; i++) {
-                Log.e(TAG, "run: " + i + " " + lines[i]);
                 if (i == 0) {
                     span[i] = 0;
                 } else {
@@ -246,13 +249,65 @@ public class RichTextView extends TextView {
 
         setText(style);
 
+        /**
+         * 翻译 并 语音播放
+         */
+        trans(flag,lines[flag]);
+
+    }
+
+    /**
+     * 翻译
+     */
+    private void trans(final int flag, String line) {
+
+        // sign
+        int salt = (int) (Math.random() * 100 + 1);
+        String sign = "20180105000112235" + line + salt + "r4HrNdBjiMgFDauWzXUq";
+        String finalSign = MD5Utils.md5Password(sign);
+        Log.e(TAG, "trans: " + finalSign);
+
+        String finalLine = "";
+        try {
+            finalLine = URLDecoder.decode(line, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+        }
+
+        HttpMethod.getInstance().trans(finalLine, "zh", "en", "20180105000112235", salt + "", finalSign, new Subscriber<TransModel>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+            }
+
+            @Override
+            public void onNext(TransModel transModel) {
+                Log.e(TAG, "onNext: " + transModel.toString());
+                if (transModel != null) {
+
+                    speak(flag,transModel.getTrans_result().get(0).getDst());
+                }
+            }
+        });
+
+    }
+
+    /**
+     * 语音播放
+     * @param flag
+     * @param finalLine
+     */
+    private void speak(final int flag, String finalLine){
         // 语音合成
         mSpeechSynthesizer.setParameter(SpeechConstant.ENGINE_TYPE, mEngineType);
         mSpeechSynthesizer.setParameter(SpeechConstant.ENGINE_MODE, mEngineType);
 
         mSpeechSynthesizer.setParameter(SpeechConstant.VOICE_NAME, voicerCloud);
 
-        mSpeechSynthesizer.startSpeaking(lines[flag], new SynthesizerListener() {
+        mSpeechSynthesizer.startSpeaking(finalLine, new SynthesizerListener() {
             @Override
             public void onSpeakBegin() {
 
@@ -285,8 +340,6 @@ public class RichTextView extends TextView {
                     msg.what = 205;
                     msg.obj = flag;
                     handler.sendMessage(msg);
-
-
                 }
             }
 
