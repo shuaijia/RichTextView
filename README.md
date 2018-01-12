@@ -31,3 +31,6 @@ tv_rich.fromHtml(text);
   
   使用SpannableStringBuilder给每局设置点击
   
+更多精彩内容，请关注我的微信公众号——Android机动车
+
+![这里写图片描述](http://img.blog.csdn.net/20180110155733884?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvamlhc2h1YWk5NA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)	
