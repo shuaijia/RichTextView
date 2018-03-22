@@ -1,4 +1,5 @@
 # RichTextView
+
 TextView实现富文本，点击断句，讯飞语音合成播放。
 
 ## 使用
@@ -20,6 +21,7 @@ tv_rich.fromHtml(text);
 ## 关键实现
 
 ### 1、讯飞集成，不再累赘
+
 ### 2、富文本处理：
   图片个数判断
   
@@ -33,4 +35,4 @@ tv_rich.fromHtml(text);
   
 更多精彩内容，请关注我的微信公众号——Android机动车
 
-![这里写图片描述](http://img.blog.csdn.net/20180110155733884?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvamlhc2h1YWk5NA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)	
+![这里写图片描述](http://img.blog.csdn.net/20180110155733884)	
