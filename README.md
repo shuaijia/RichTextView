@@ -33,6 +33,6 @@ tv_rich.fromHtml(text);
   
   使用SpannableStringBuilder给每局设置点击
   
-更多精彩内容，请关注我的微信公众号——Android机动车
+更多精彩内容，请关注我的微信公众号——**Android机动车**
 
 ![这里写图片描述](http://img.blog.csdn.net/20180110155733884)	
