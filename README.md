@@ -20,7 +20,6 @@ tv_rich = findViewById(R.id.tv_rich);
 tv_rich.fromHtml(text);
 ```
 
-
 ## 关键实现
 
 ### 1、讯飞集成，不再累赘
